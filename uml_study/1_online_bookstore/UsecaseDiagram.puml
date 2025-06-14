@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+
+' 액터 정의
+actor "구매자" as customer
+actor "재고관리 책임자" as stockManager
+
+' 시스템 경계 및 유스케이스 정의
+rectangle "온라인 서점 시스템" {
+  usecase "회원가입하기" as UC_Register
+  usecase "로그인하기" as UC_Login
+  usecase "상품 검색" as UC_Search
+  usecase "장바구니 담기" as UC_AddToCart
+  usecase "주문하기" as UC_Order
+
+  ' extend 될 유스케이스 추가
+  usecase "쿠폰 사용하기" as UC_UseCoupon
+
+  ' 재고관리 책임자 유스케이스 추가
+  usecase "재고 검색" as UC_StockCheck
+  usecase "재고 추가" as UC_StockAdd
+  usecase "재고 수정" as UC_StockModify
+}
+
+' 관계 연결
+customer -- UC_Register
+customer -- UC_Login
+customer -- UC_Search
+customer -- UC_AddToCart
+customer -- UC_Order
+
+stockManager -- UC_StockCheck
+stockManager -- UC_StockAdd
+stockManager -- UC_StockModify
+
+' <<include>> 관계 (A ..> B : A는 B를 반드시 포함)
+UC_AddToCart ..> UC_Login : <<include>>
+UC_Order ..> UC_Login : <<include>>
+
+' <<extend>> 관계 (A <.. B : A는 B로 확장될 수 있음)
+UC_Order <.. UC_UseCoupon : <<extend>>
+@enduml
