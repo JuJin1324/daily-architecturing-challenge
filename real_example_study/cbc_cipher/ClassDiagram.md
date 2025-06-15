@@ -1,4 +1,4 @@
-## CBC Cipher
+## Cipher
 ### 클래스 다이어그램
 ```mermaid
 classDiagram
@@ -26,12 +26,11 @@ classDiagram
     
     class CbcCipherTemplate {
         <<abstract>>
-        #IV_8_BYTES$: byte[]
-        #IV_16_BYTES$: byte[]
         +encrypt(byte[] source): byte[]
+        #createZeroIV(int size): byte[]
         #getIV*(): byte[]
         #getKey*(): byte[]
-        #getCipher*(): Cipher
+        #getCipherTransformation*(): String
         #getKeyAlgorithm*(): String
     }
     
@@ -43,12 +42,43 @@ classDiagram
         +encrypt(byte[] source): byte[]
     }
     
+    class TripleDesCbcCipher {
+        +encrypt(byte[] source): byte[]
+    }
+    
     class ByteArray {
         -value: byte[]
         +of(byte[] source)$: ByteArray
         +from(String hex)$: ByteArray
         +toByteArray(): byte[]
         +toHexString(): String
+    }
+
+    class CipherException {
+        <<Exception>>
+        +CipherException(String message)
+        +CipherException(String message, Throwable cause)
+    }
+    
+    class EncryptionException {
+        <<Exception>>
+        -MESSAGE$: String
+        +EncryptionException()
+        +EncryptionException(Throwable cause)
+    }
+    
+    class DecryptionException {
+        <<Exception>>
+        -MESSAGE$: String
+        +DecryptionException()
+        +DecryptionException(Throwable cause)
+    }
+    
+    class InvalidKeyException {
+        <<Exception>>
+        -MESSAGE$: String
+        +InvalidKeyException()
+        +InvalidKeyException(Throwable cause)
     }
 
     %% 관계 정의 (Relationships)
@@ -62,5 +92,10 @@ classDiagram
     CbcCipherTemplate ..|> CbcCipher : implements
     AesCbcCipher --|> CbcCipherTemplate : extends
     DesCbcCipher --|> CbcCipherTemplate : extends
+    TripleDesCbcCipher --|> CbcCipherTemplate : extends
     SCP80Cipher "1" *-- "1" CbcCipher : has 
+    
+    EncryptionException --|> CipherException : extends
+    DecryptionException --|> CipherException : extends
+    InvalidKeyException --|> CipherException : extends
 ```
